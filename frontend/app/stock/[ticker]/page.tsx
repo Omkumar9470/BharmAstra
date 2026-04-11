@@ -47,7 +47,7 @@ export default function StockAnalysisPage({
       setSentiment(sentData);
       setRecommendation(recData);
     } catch (e) {
-      setError("Failed to load stock data. Please try again.");
+      setError(`Could not load data for "${decoded}". Make sure it's a valid NSE ticker like RELIANCE.NS or TCS.NS`);
     } finally {
       setLoading(false);
     }
@@ -159,13 +159,13 @@ export default function StockAnalysisPage({
                   <div className="mb-6">
                     <div className="flex justify-between text-sm text-gray-500 mb-1">
                       <span>Bearish</span>
-                      <span>Combined Score: <strong className="text-white">{recommendation.combined_score.toFixed(2)}</strong></span>
+                      <strong className="text-white">{recommendation.combined_score?.toFixed(2) ?? "N/A"}</strong>
                       <span>Bullish</span>
                     </div>
                     <div className="h-3 bg-[#262626] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-red-500 via-yellow-400 to-emerald-500 rounded-full"
-                        style={{ width: `${((recommendation.combined_score + 1) / 2) * 100}%` }}
+                        style={{ width: `${(((recommendation.combined_score ?? 0) + 1) / 2) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -178,12 +178,12 @@ export default function StockAnalysisPage({
                   <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
                     <div className="bg-[#111] rounded-lg p-4">
                       <div className="text-gray-500 text-xs mb-1">Technical Score</div>
-                      <div className="text-2xl font-bold text-blue-400">{recommendation.technical_score.toFixed(2)}</div>
+                      <div className="text-2xl font-bold text-blue-400">{recommendation.technical_score?.toFixed(2) ?? "N/A"}</div>
                       <div className="text-xs text-gray-600">{recommendation.technical_bias}</div>
                     </div>
                     <div className="bg-[#111] rounded-lg p-4">
                       <div className="text-gray-500 text-xs mb-1">Sentiment Score</div>
-                      <div className="text-2xl font-bold text-purple-400">{recommendation.sentiment_score.toFixed(2)}</div>
+                      <div className="text-2xl font-bold text-purple-400">{recommendation.sentiment_score?.toFixed(2) ?? "N/A"}</div>
                       <div className="text-xs text-gray-600">{recommendation.sentiment_label?.toUpperCase()}</div>
                     </div>
                   </div>
@@ -225,7 +225,7 @@ export default function StockAnalysisPage({
                   {technical.bias}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {technical.signals.map((signal) => (
+                  {(technical.signals ?? []).map((signal) => (
                     <div key={signal.indicator} className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-5">
                       <div className="flex justify-between items-start mb-2">
                         <span className="font-semibold">{signal.indicator}</span>
@@ -247,7 +247,7 @@ export default function StockAnalysisPage({
                 <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-6">
                   <h3 className="font-semibold mb-4 text-gray-300">Latest Indicator Values</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {Object.entries(technical.latest_indicators).map(([key, val]) => (
+                    {Object.entries(technical.latest_indicators ?? {}).map(([key, val]) => (
                       <div key={key} className="bg-[#111] rounded-lg p-3">
                         <div className="text-gray-500 text-xs uppercase mb-1">{key.replace("_", " ")}</div>
                         <div className="text-white font-mono">{val ?? "N/A"}</div>
@@ -290,7 +290,7 @@ export default function StockAnalysisPage({
                 </div>
 
                 <div className="space-y-3">
-                  {sentiment.articles.map((article, i) => (
+                  {(sentiment.articles ?? []).map((article, i) => (
                     <a
                       key={i}
                       href={article.url}
