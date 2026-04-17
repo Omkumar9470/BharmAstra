@@ -4,7 +4,8 @@ import math
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-from routers import technical, sentiment, recommendation
+from utils.response import sanitize_nan, SafeJSONResponse
+from routers import technical, sentiment, recommendation, fundamental
 
 
 def sanitize_nan(obj):
@@ -40,6 +41,7 @@ app.add_middleware(
 app.include_router(technical.router, prefix="/api")
 app.include_router(sentiment.router, prefix="/api")
 app.include_router(recommendation.router, prefix="/api")
+app.include_router(fundamental.router, prefix="/api")
 
 @app.get("/ping")
 def ping():
